@@ -9,6 +9,14 @@ const passportInit = require("./passport/passportInit");
 const secretWordRouter = require("./routes/secretWord");
 const auth = require("./middleware/auth");
 
+const cookieParser = require("cookie-parser");
+const csrf = require("host-csrf");
+
+// extra security packages
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const rateLimiter = require("express-rate-limit");
+
 const app = express();
 
 app.set("view engine", "ejs");
@@ -37,7 +45,29 @@ if (app.get("env") === "production") {
   sessionParms.cookie.secure = true; // serve secure cookies
 }
 
+app.use(helmet()); // before session, set headers
+
 app.use(session(sessionParms));
+
+
+// after cookie_parser and any body parsers but before any of the routes.
+app.use(cookieParser(process.env.SESSION_SECRET));
+app.use(express.urlencoded({ extended: false }));
+
+let csrf_development_mode = true;
+
+if (app.get("env") === "production") {
+  csrf_development_mode = false;
+  app.set("trust proxy", 1);
+}
+const csrf_options = {
+  protected_operations: ["PATCH", "PUT", "POST"],
+  protected_content_types: ["application/json", "application/x-www-form-urlencoded"], // protect headers from
+  development_mode: csrf_development_mode,
+};
+app.use(csrf(csrf_options));
+
+
 
 /**This registers our local Passport strategy, 
  * and sets up the serializeUser and deserializeUser functions onto the passport object. */
@@ -56,9 +86,25 @@ app.use(passport.session());
 app.use(require("connect-flash")());
 
 app.use(require("./middleware/storeLocals"));
+
+
+// more security
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  })
+);
+
+app.use(xss());
+
+
+// routes
+
 app.get("/", (req, res) => {
   res.render("index");
 });
+
 app.use("/sessions", require("./routes/sessionRoutes"));
 
 
