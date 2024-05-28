@@ -14,14 +14,14 @@ const passportInit = () => {
         try {
           const user = await User.findOne({ email: email });
           if (!user) {
-            return done(null, false, { message: "Incorrect credentials." });
+            return done(null, false, { message: "Email provided doesn't match the one on file." });
           }
 
           const result = await user.comparePassword(password);
           if (result) {
             return done(null, user);
           } else {
-            return done(null, false, { message: "Incorrect credentials." });
+            return done(null, false, { message: "Password provided doesn't match the one on file." });
           }
         } catch (e) {
           return done(e);
@@ -38,7 +38,7 @@ const passportInit = () => {
     try {
       const user = await User.findById(id);
       if (!user) {
-        return done(new Error("user not found"));
+        return done(new Error("User not found"));
       }
       return done(null, user);
     } catch (e) {

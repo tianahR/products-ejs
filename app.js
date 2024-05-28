@@ -6,18 +6,25 @@ require('connect-flash');
 const MongoDBStore = require("connect-mongodb-session")(session);
 const passport = require("passport");
 const passportInit = require("./passport/passportInit");
+
 const secretWordRouter = require("./routes/secretWord");
 const auth = require("./middleware/auth");
 
 const cookieParser = require("cookie-parser");
 const csrf = require("host-csrf");
 
+const productsRouter = require("./routes/products");
+
 // extra security packages
 const helmet = require("helmet");
 const xss = require("xss-clean");
 const rateLimiter = require("express-rate-limit");
 
+const path = require("path");
+
 const app = express();
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.set("view engine", "ejs");
 app.use(require("body-parser").urlencoded({ extended: true }));
@@ -124,6 +131,8 @@ app.use("/sessions", require("./routes/sessionRoutes"));
 // Turning on protection is simple. You add the authentication middleware "auth" to the route 
 
 app.use("/secretWord", auth, secretWordRouter);
+
+app.use("/products", auth, productsRouter);
 
 
 // // secret word handling

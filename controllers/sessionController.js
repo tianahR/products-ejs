@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const parseVErr = require("../util/parseValidationErr");
-const flash = require('connect-flash')
+// const flash = require('connect-flash')
+const csrf = require("host-csrf");
 
 
 
@@ -17,7 +18,7 @@ const registerShow = (req, res) => {
 const registerDo = async (req, res, next) => {
   if (req.body.password != req.body.password1) {
     req.flash("error", "The passwords entered do not match.");
-    return res.render("register", {  errors: flash("errors") });
+    res.render("register", {errors: req.flash.errors});
   }
   try {
     await User.create(req.body);
@@ -45,12 +46,10 @@ const logoff = (req, res) => {
 
 const logonShow = (req, res) => {
   if (req.user) {
+    csrf.refresh(req,res);
     return res.redirect("/");
   }
-  res.render("logon", {
-    // errors: req.flash("error"), //handle by passport
-    // info: req.flash("info"),
-  });
+  res.render("logon");
 };
 
 module.exports = {
