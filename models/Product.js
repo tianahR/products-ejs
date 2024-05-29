@@ -78,7 +78,7 @@ const ProductSchema = new mongoose.Schema(
       ],
       default: "M",
     },
-    genre: {
+    gender: {
       type: String,
       enum: [
         "Male",

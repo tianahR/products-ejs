@@ -1,0 +1,86 @@
+<%- include("partials/head.ejs") %> 
+<%- include("partials/header.ejs") %>
+
+<div class="container">
+  <h2><%= product ? "Edit" : "Add" %> Product</h2>
+<form method="POST" action="<%= product ? '/products/update/' + product._id : '/products' %>">
+  <div>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" value="<%= product ? product.name : '' %>" required />
+  </div>
+  <div>
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" value="<%= product ? product.description : '' %>" required />
+  </div>
+  <div>
+    <label for="type">Type:</label>
+    <select id="type" name="type">
+      <option value="T-shirt" <%= product && product.type === "T-shirt" ? "selected" : '' %> >T-shirt</option>
+      <option value="Shirt" <%= product && product.type === "Shirt" ? "selected" : '' %> >Shirt</option>
+      <option value="Sweater" <%= product && product.type === "Sweater" ? "selected" : '' %> >Sweater</option>
+      <option value="Tank Top" <%= product && product.type === "Tank Top" ? "selected" : '' %> >Tank Top</option>   
+      <option value="Polo Shirt" <%= product && product.type === "Polo Shirt" ? "selected" : '' %> >Polo Shirt</option>
+      <option value="Hoodie" <%= product && product.type === "Hoodie" ? "selected" : '' %> >Hoodie</option>
+      <option value="Jeans" <%= product && product.type === "Jeans" ? "selected" : '' %> >Jeans</option>
+      <option value="Pants" <%= product && product.type === "Pants" ? "selected" : '' %> >Pants</option>
+      <option value="Shorts" <%= product && product.type === "Shorts" ? "selected" : '' %> >Shorts</option>
+      <option value="Skirt" <%= product && product.type === "Skirt" ? "selected" : '' %> >Skirt</option>
+      <option value="Leggins" <%= product && product.type === "Leggins" ? "selected" : '' %> >Leggins</option>
+      <option value="Dress" <%= product && product.type === "Dress" ? "selected" : '' %> >Dress</option>
+      <option value="Jacket" <%= product && product.type === "Jacket" ? "selected" : '' %> >Jacket</option>
+      <option value="Coat" <%= product && product.type === "Coat" ? "selected" : '' %> >Coat</option>
+      <option value="Blazer" <%= product && product.type === "Blazer" ? "selected" : '' %> >Blazer</option>
+      <option value="Raincoat" <%= product && product.type === "Raincoat" ? "selected" : '' %> >Raincoat</option>    
+      <option value="Panties" <%= product && product.type === "Panties" ? "selected" : '' %> >Panties</option>
+      <option value="Briefs" <%= product && product.type === "Briefs" ? "selected" : '' %> >Briefs</option>
+      <option value="Bras" <%= product && product.type === "Bras" ? "selected" : '' %> >Bras</option>
+      <option value="Others" <%= product && product.type === "Others" ? "selected" : '' %> >Others</option>         
+    </select>
+  </div>
+
+  <div>
+    <label for="size">Size:</label>
+    <select id="size" name="size">
+      <option value="2T" <%= product && product.size === "2T" ? "selected" : '' %> >2T</option>
+      <option value="3T" <%= product && product.size === "3T" ? "selected" : '' %> >3T</option>       
+      <option value="4T" <%= product && product.size === "4T" ? "selected" : '' %> >4T</option>
+      <option value="YS" <%= product && product.size === "YS" ? "selected" : '' %> >YS</option>
+      <option value="YM" <%= product && product.size === "YM" ? "selected" : '' %> >YM</option>
+      <option value="YL" <%= product && product.size === "YL" ? "selected" : '' %> >YL</option>
+      <option value="XS" <%= product && product.size === "XS" ? "selected" : '' %> >XS</option>
+      <option value="S" <%= product && product.size === "S" ? "selected" : '' %> >S</option>
+      <option value="M" <%= product && product.size === "M" ? "selected" : '' %> >M</option>
+      <option value="L" <%= product && product.size === "L" ? "selected" : '' %> >L</option>
+      <option value="XL" <%= product && product.size === "XL" ? "selected" : '' %> >XL</option>
+      <option value="XXL" <%= product && product.size === "XXL" ? "selected" : '' %> >XXL</option>
+      <option value="1X" <%= product && product.size === "1X" ? "selected" : '' %> >1X</option>
+      <option value="2X" <%= product && product.size === "2X" ? "selected" : '' %> >2X</option>
+      <option value="3X" <%= product && product.size === "3X" ? "selected" : '' %> >3X</option>
+      <option value="1XL" <%= product && product.size === "1XL" ? "selected" : '' %> >1XL</option>
+      <option value="2XL" <%= product && product.size === "2XL" ? "selected" : '' %> >2XL</option>
+    </select>
+</div>
+
+
+<div>
+    <label for="gender">Gender:</label>
+    <select id="gender" name="gender">
+      <option value="Male" <%= product && product.gender === "Male" ? "selected" : '' %> >Male</option>
+      <option value="Female" <%= product && product.gender === "Female" ? "selected" : '' %> >Female</option>       
+    </select>
+</div>
+    
+
+  
+   <div>
+    <label for="price">Price:</label>
+    <input type="text" id="price" name="price" value="<%= product ? product.price : '' %>" required"/>
+  </div>
+  <button type="submit" id="adding-product"><%= product ? "Update" : "Add" %></button>
+  <input type="hidden" name="_csrf" value="<%= _csrf %>" /> 
+</form>
+
+</div>
+
+
+<%- include("partials/footer.ejs") %>
