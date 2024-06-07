@@ -105,12 +105,37 @@ app.use(
 
 app.use(xss());
 
+// for the test
+app.use((req,res,next)=> {
+  if (req.path == "/multiply") {
+    res.set("Content-Type","application/json")
+  } else {
+    res.set("Content-Type","text/html")
+  }
+  next()
+})
+// end of for the test
+
 
 // routes
 
 app.get("/", (req, res) => {
   res.render("index");
 });
+
+
+// function testing for an api
+app.get("/multiply", (req,res)=> {
+  const result = req.query.first * req.query.second
+  if (result.isNaN) {
+    result = "NaN"
+  } else if (result == null) {
+    result = "null"
+  }
+  res.json({result: result})
+})
+
+//end of function testing for an api
 
 app.use("/sessions", require("./routes/sessionRoutes"));
 
@@ -179,15 +204,39 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 3000;
 
-const start = async () => {
+let mongoURL = process.env.MONGO_URI //for the test
+
+// const start = async () => {
+//   try {
+//     // await require("./db/connect")(process.env.MONGO_URI);
+   
+//     if (process.env.NODE_ENV === "test") {
+//         mongoURL = process.env.MONGO_URI_TEST
+//     }
+//     await require("./db/connect")(mongoURL);
+
+//     app.listen(port, () =>
+//       console.log(`Server is listening on port ${port}...`)
+//     );
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+// start();
+
+
+const start = () => {
   try {
-    await require("./db/connect")(process.env.MONGO_URI);
-    app.listen(port, () =>
-      console.log(`Server is listening on port ${port}...`)
+    require("./db/connect")(process.env.MONGO_URI);
+    return app.listen(port, () =>
+      console.log(`Server is listening on port ${port}...`),
     );
   } catch (error) {
     console.log(error);
   }
 };
 
-start();
+const server = start();
+
+module.exports = { app, server };
