@@ -12,9 +12,10 @@ let request = chai.request;
 import { factory, seed_db } from "../util/seed_db.js"
 
 //const faker = require("@faker-js/faker").fakerEN_US;
-import {fakerEN_US} from "@faker-js/faker"
+import {faker, fakerEN_US} from "@faker-js/faker"
 
-const User = require("../models/User.js");
+//const User = require("../models/User.js");
+import User from "../models/User.js";
 
 
 describe("tests for registration and logon", function () {
@@ -22,9 +23,8 @@ describe("tests for registration and logon", function () {
     server.close();
   });
   it("should get the registration page", (done) => {
-    chai
-      .request(app)
-      .get("/session/register")
+    request(app)
+      .get("/sessions/register")
       .send()
       .end((err, res) => {
         expect(err).to.equal(null);
@@ -49,63 +49,81 @@ describe("tests for registration and logon", function () {
   });
 
   it("should register the user", async () => {
-    this.password = faker.internet.password();
-    this.user = await factory.build("user", { password: this.password });
-    const dataToPost = {
-      name: this.user.name,
-      email: this.user.email,
-      password: this.password,
-      password1: this.password,
-      _csrf: this.csrfToken,
-    };
-    try {
-      const request = chai
-        .request(app)
-        .post("/session/register")
-        .set("Cookie", `csrfToken=${this.csrfCookie}`)
-        .set("content-type", "application/x-www-form-urlencoded")
-        .send(dataToPost);
-      res = await request;
-      console.log("got here");
-      expect(res).to.have.status(200);
-      expect(res).to.have.property("text");
-      expect(res.text).to.include("Products List");
-      newUser = await User.findOne({ email: this.user.email });
-      expect(newUser).to.not.be.null;
-      console.log(newUser);
-    } catch (err) {
-      console.log(err);
-      expect.fail("Register request failed");
+      this.password = faker.internet.password();
+      this.user = await factory.build("user", { password: this.password });
+
+      const dataToPost = {
+        name: this.user.name,
+        email: this.user.email,
+        password: this.password,
+        password1: this.password,
+        _csrf: this.csrfToken,
+      };
+
+      try 
+      {
+            const request = chai
+              .request(app)
+              .post("/sessions/register")
+              .set("Cookie", `csrfToken=${this.csrfCookie}`)
+              .set("content-type", "application/x-www-form-urlencoded")
+              .send(dataToPost);
+
+            const res = await request;
+            console.log("got here");
+            expect(res).to.have.status(200);
+            expect(res).to.have.property("text");
+            expect(res.text).to.include("Products List");
+
+            let newUser = await User.findOne({ email: this.user.email });
+            expect(newUser).to.not.be.null;
+            console.log(newUser);
+
+      } catch (err) {
+            console.log(err);
+            expect.fail("Register request failed");
     }
   });
 
+
   it("should log the user on", async () => {
+
     const dataToPost = {
       email: this.user.email,
       password: this.password,
       _csrf: this.csrfToken,
     };
+
+    
+
     try {
-      const request = chai
-        .request(app)
-        .post("/session/logon")
-        .set("Cookie",this.csrfCookie)
-        .set("content-type", "application/x-www-form-urlencoded")
-        .redirects(0)
-        .send(dataToPost);
-      res = await request;
-      expect(res).to.have.status(302);
-      expect(res.headers.location).to.equal('/')
-      const cookies = res.headers["set-cookie"];
-      this.sessionCookie = cookies.find((element) =>
-      element.startsWith("connect.sid"),
-    );
-    expect(this.sessionCookie).to.not.be.undefined;
+
+          console.log("data to post", dataToPost);
+
+          const request = chai
+            .request(app)
+            .post("/sessions/logon")
+            .set("Cookie", `csrfToken=${this.csrfCookie}`)
+            .set("content-type", "application/x-www-form-urlencoded")
+            .redirects(0)
+            .send(dataToPost);
+
+          const res = await request;
+          expect(res).to.have.status(302);
+          expect(res.headers.location).to.equal('/')
+          const cookies = res.headers["set-cookie"];
+
+          this.sessionCookie = cookies.find((element) =>
+          element.startsWith("connect.sid"),
+          );
+          expect(this.sessionCookie).to.not.be.undefined;
     } catch (err) {
+
       console.log(err);
-      expect.fail("Logon request failed");
+      expect.fail("Logon request failed eeeee");
     }
   });
+  
   it("should get the index page", (done)=>{
     chai.request(app).get("/")
     .set('Cookie',this.sessionCookie)
