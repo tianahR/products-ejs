@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const parseVErr = require("../util/parseValidationErr");
-// const flash = require('connect-flash')
+//const flash = require('connect-flash')
 const csrf = require("host-csrf");
 
 
@@ -16,24 +16,34 @@ const registerShow = (req, res) => {
  */
 
 const registerDo = async (req, res, next) => {
-  if (req.body.password != req.body.password1) {
-    req.flash("error", "The passwords entered do not match.");
-    res.render("register", {errors: req.flash.errors});
+
+
+ 
+  if (req.body.password != req.body.password1) 
+  {
+      //console.log("calling register do indray") 
+      req.flash("error", "The passwords entered do not match.");
+      return res.render("register", {errors: req.flash("error")});
   }
-  try {
+  try 
+  {
     await User.create(req.body);
-  } catch (e) {
-    if (e.constructor.name === "ValidationError") {
-      parseVErr(e, req);
-    } else if (e.name === "MongoServerError" && e.code === 11000) {
-      req.flash("error", "That email address is already registered.");
-    } else {
-      return next(e);
-    }
-    return res.render("register", {  errors: flash("errors") });
+  } 
+  catch (e) 
+  {
+        if (e.constructor.name === "ValidationError") {
+          parseVErr(e, req);
+        } else if (e.name === "MongoServerError" && e.code === 11000) {
+            req.flash("error", "That email address is already registered.");
+        } else {
+          return next(e);
+        }
+        return res.render("register", { errors: req.flash("error") });
   }
-  res.redirect("/");
+  return res.redirect("/");
 };
+
+
 
 const logoff = (req, res) => {
   req.session.destroy(function (err) {

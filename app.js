@@ -206,12 +206,21 @@ const port = process.env.PORT || 3000;
 
 let mongoURL = process.env.MONGO_URI //for the test
 
+if (process.env.NODE_ENV === "test") {
+          mongoURL = process.env.MONGO_URI_TEST
+         
+}
+
+
+
+
 // const start = async () => {
 //   try {
 //     // await require("./db/connect")(process.env.MONGO_URI);
    
 //     if (process.env.NODE_ENV === "test") {
 //         mongoURL = process.env.MONGO_URI_TEST
+//         console.log (`mandalo ato" ${mongoURL}`)
 //     }
 //     await require("./db/connect")(mongoURL);
 
@@ -223,12 +232,12 @@ let mongoURL = process.env.MONGO_URI //for the test
 //   }
 // };
 
-// start();
+// const server = start();
 
 
 const start = () => {
   try {
-    require("./db/connect")(process.env.MONGO_URI);
+    require("./db/connect")(mongoURL);
     return app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`),
     );

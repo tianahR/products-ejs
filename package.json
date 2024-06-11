@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test":"SET NODE_ENV=test & mocha tests/*.mjs --exit"
+    "test":"SET NODE_ENV=test& mocha tests/*.mjs --exit"
    
     
   },
