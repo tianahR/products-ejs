@@ -10,6 +10,8 @@ import { app, server } from "../app.js";
 const chai = use(chaiHttp);
 let request = chai.request;
 
+
+
 // for registration and logon test
 
 import { factory, seed_db } from "../util/seed_db.js"
@@ -27,7 +29,7 @@ describe("test multiply api", function () {
       server.close();
     });
     it("should multiply two numbers", (done) => {
-          request(app).get("/multiply")
+          chai.request(app).get("/multiply")
           .query({first: 7, second: 6})
           .send()
           .end((err,res)=> {
@@ -42,7 +44,7 @@ describe("test multiply api", function () {
 })
 
 
-// the tesy for registration and logon doesn't work in a separate file 
+// the test for registration and logon doesn't work in a separate file 
 
 describe("tests for registration and logon", function () {
   after(() => {
@@ -124,7 +126,7 @@ describe("tests for registration and logon", function () {
 
     try {
 
-          console.log("data to post", dataToPost);
+          // console.log("data to post", dataToPost);
 
           const request = chai
             .request(app)
@@ -146,7 +148,7 @@ describe("tests for registration and logon", function () {
     } catch (err) {
 
       console.log(err);
-      expect.fail("Logon request failed eeeee");
+      expect.fail("Logon request failed");
     }
   });
   
